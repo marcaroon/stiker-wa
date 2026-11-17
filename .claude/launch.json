@@ -1,0 +1,6 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    { "name": "stiker-wa", "runtimeExecutable": "node", "runtimeArgs": ["server/index.mjs"], "port": 8787 }
+  ]
+}

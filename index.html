@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Stiker WA Maker</title>
+    <meta name="description" content="Bikin stiker WhatsApp dari foto, video, atau link TikTok / Reels / X." />
+    <meta name="theme-color" content="#16140f" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#f2ede3" media="(prefers-color-scheme: light)" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="Stiker WA" />
+  </head>
+  <body>
+    <div class="grain" aria-hidden="true"></div>
+
+    <header class="top">
+      <a class="logo" href="/" aria-label="Stiker WA">STIKER<i>/</i>WA</a>
+      <nav class="tabs" role="tablist">
+        <button role="tab" data-tab="make" aria-selected="true">Bikin</button>
+        <button role="tab" data-tab="collection" aria-selected="false" id="tab-album">Album<b id="count" hidden></b></button>
+      </nav>
+      <button id="install" class="chip hot" hidden>Pasang app</button>
+    </header>
+
+    <main>
+      <!-- ================= BIKIN ================= -->
+      <section id="view-make">
+        <div id="picker" class="picker">
+          <h1 class="hero">Bikin stiker <span class="mark">dari apa aja.</span></h1>
+          <p class="kicker">foto <i>✺</i> video <i>✺</i> gif <i>✺</i> tiktok <i>✺</i> reels <i>✺</i> x</p>
+
+          <label class="mat drop" id="drop">
+            <input id="file" type="file" accept="image/*,video/*" hidden />
+            <span class="ruler" aria-hidden="true"></span>
+            <span class="doodles" aria-hidden="true">
+              <span class="dd d1"><svg viewBox="0 0 100 100"><path d="M50 6l12 30 32 2-25 20 9 32-28-18-28 18 9-32L6 38l32-2z" fill="#ffd23f" stroke="#141210" stroke-width="4" stroke-linejoin="round"/></svg></span>
+              <span class="dd d2"><svg viewBox="0 0 100 100"><path d="M50 88S10 62 10 36a20 20 0 0 1 40-6 20 20 0 0 1 40 6c0 26-40 52-40 52z" fill="#ff9fd0" stroke="#141210" stroke-width="4" stroke-linejoin="round"/></svg></span>
+              <span class="dd d3"><svg viewBox="0 0 100 100"><path d="M58 4L18 56h26l-8 40 46-56H54z" fill="#ff5b3a" stroke="#141210" stroke-width="4" stroke-linejoin="round"/></svg></span>
+              <span class="dd d4"><svg viewBox="0 0 100 100"><path d="M50 8c26 0 44 14 42 40-2 30-22 44-44 44S6 76 8 50 24 8 50 8z" fill="#c8f53c" stroke="#141210" stroke-width="4"/><circle cx="36" cy="42" r="6" fill="#141210"/><circle cx="64" cy="42" r="6" fill="#141210"/><path d="M32 60q18 18 36 0" stroke="#141210" stroke-width="5" fill="none" stroke-linecap="round"/></svg></span>
+              <span class="dd d5"><svg viewBox="0 0 120 90"><path d="M10 10h100v54H48L26 84l4-20H10z" fill="#3346ff" stroke="#141210" stroke-width="4" stroke-linejoin="round"/><text x="60" y="46" text-anchor="middle" font-family="Space Mono, monospace" font-weight="700" font-size="26" fill="#fff">HAH?</text></svg></span>
+            </span>
+            <span class="cta">Pilih file</span>
+            <span class="hint">atau seret ke sini · ctrl+v juga bisa</span>
+          </label>
+
+          <form id="link-form" class="tape">
+            <span id="plat" class="plat" data-p="">?</span>
+            <input id="link" type="url" inputmode="url" placeholder="link tiktok / reels / x" autocomplete="off" spellcheck="false" />
+            <button type="button" id="paste" class="icon-btn" title="Tempel dari clipboard" aria-label="Tempel dari clipboard">
+              <svg viewBox="0 0 24 24" width="20" height="20"><path d="M9 4h6v3H9zM7 5H5v16h14V5h-2" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/></svg>
+            </button>
+            <button type="submit" id="fetch-btn" class="go">Ambil<span aria-hidden="true">→</span></button>
+          </form>
+          <div id="link-loading" class="marquee" hidden aria-live="polite">
+            <div><span>Lagi ngambil video ✺ sabar ya ✺ lagi ngambil video ✺ sabar ya ✺&nbsp;</span><span aria-hidden="true">Lagi ngambil video ✺ sabar ya ✺ lagi ngambil video ✺ sabar ya ✺&nbsp;</span></div>
+          </div>
+          <p id="link-status" class="status" hidden></p>
+        </div>
+
+        <div id="editor" class="editor" hidden>
+          <div class="stage-col">
+            <div class="mat stage-mat">
+              <span class="ruler" aria-hidden="true"></span>
+              <div class="stage-bar">
+                <button id="reset-src" class="chip">← ganti</button>
+                <span id="src-info" class="chip quiet"></span>
+              </div>
+              <div class="stage-wrap">
+                <canvas id="stage" width="512" height="512" class="checker"></canvas>
+                <svg class="cutline" viewBox="0 0 512 512" aria-hidden="true"><rect id="cutrect" x="3" y="3" width="506" height="506" rx="0" /></svg>
+              </div>
+              <p class="hint">geser = posisi · scroll / cubit = zoom · klik 2× = reset</p>
+            </div>
+
+            <div id="trim" class="paper trim" hidden>
+              <div class="trim-head"><span class="lbl">Potong</span><span id="trim-out" class="mono">0.0s → 3.0s</span></div>
+              <div class="track" id="track">
+                <div class="strip" id="strip"></div>
+                <div class="sel" id="sel">
+                  <span class="h" data-h="l"></span>
+                  <em id="sel-len">3.0s</em>
+                  <span class="h" data-h="r"></span>
+                </div>
+                <div class="playhead" id="playhead"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="tool-col">
+            <div class="dock" role="tablist">
+              <button data-tool="pos" aria-selected="true">
+                <svg viewBox="0 0 24 24"><path d="M12 2v20M2 12h20M12 2l-3 3m3-3 3 3M12 22l-3-3m3 3 3-3M2 12l3-3m-3 3 3 3m17-3-3-3m3 3-3 3"/></svg>Posisi
+              </button>
+              <button data-tool="shape" aria-selected="false">
+                <svg viewBox="0 0 24 24"><rect x="3" y="3" width="12" height="12" rx="3"/><circle cx="15" cy="15" r="6"/></svg>Bentuk
+              </button>
+              <button data-tool="text" aria-selected="false">
+                <svg viewBox="0 0 24 24"><path d="M4 6V4h16v2M12 4v16M8 20h8"/></svg>Teks
+              </button>
+              <button data-tool="motion" aria-selected="false" id="motion-btn" hidden>
+                <svg viewBox="0 0 24 24"><path d="M6 4l14 8-14 8z"/></svg>Gerak
+              </button>
+            </div>
+
+            <div class="paper panel" data-panel="pos">
+              <div class="field">
+                <span class="lbl">Isi bingkai</span>
+                <div class="seg" data-key="fit">
+                  <button data-v="cover" aria-pressed="true">Penuh</button><button data-v="contain">Utuh</button>
+                </div>
+              </div>
+              <label class="field">
+                <span class="lbl">Zoom <output id="zoom-out">1.0×</output></span>
+                <input id="zoom" type="range" min="0.3" max="4" step="0.01" value="1" />
+              </label>
+              <button id="reset-pos" class="chip">↺ reset posisi</button>
+            </div>
+
+            <div class="paper panel" data-panel="shape" hidden>
+              <div class="field">
+                <span class="lbl">Bentuk</span>
+                <div class="seg shapes" data-key="radius">
+                  <button data-v="0" aria-pressed="true"><i class="shp s0"></i>Kotak</button><button data-v="72"><i class="shp s1"></i>Tumpul</button><button data-v="256"><i class="shp s2"></i>Bulat</button>
+                </div>
+              </div>
+              <div class="field">
+                <span class="lbl">Latar</span>
+                <div class="seg" data-key="bg">
+                  <button data-v="transparent" aria-pressed="true"><i class="sw checker"></i>Bening</button><button data-v="white"><i class="sw" style="background:#fff"></i>Putih</button><button data-v="black"><i class="sw" style="background:#000"></i>Hitam</button>
+                </div>
+              </div>
+              <div class="field">
+                <span class="lbl">Outline putih <small>(efek stiker potong)</small></span>
+                <div class="seg" data-key="outline">
+                  <button data-v="0" aria-pressed="true">Tanpa</button><button data-v="9">Tipis</button><button data-v="18">Tebal</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="paper panel" data-panel="text" hidden>
+              <textarea id="text" rows="2" placeholder="tulis sesuatu yang pedes…"></textarea>
+              <div class="field">
+                <span class="lbl">Font</span>
+                <div class="seg fonts" data-key="textFont">
+                  <button data-v="impact" aria-pressed="true" style="font-family: Impact, 'Arial Black', sans-serif">Meme</button><button data-v="display" style="font-family: 'Bricolage Grotesque Variable'; font-weight: 800">Gendut</button><button data-v="mono" style="font-family: 'Space Mono'; font-weight: 700">Ketik</button>
+                </div>
+              </div>
+              <div class="two">
+                <div class="field">
+                  <span class="lbl">Gaya</span>
+                  <div class="seg" data-key="textStyle">
+                    <button data-v="outline" aria-pressed="true">Garis</button><button data-v="label">Label</button>
+                  </div>
+                </div>
+                <div class="field">
+                  <span class="lbl">Letak</span>
+                  <div class="seg" data-key="textPos">
+                    <button data-v="top">Atas</button><button data-v="bottom" aria-pressed="true">Bawah</button>
+                  </div>
+                </div>
+              </div>
+              <div class="field">
+                <span class="lbl">Warna</span>
+                <div class="swatches" id="swatches">
+                  <button data-c="#ffffff" aria-pressed="true" style="--c:#ffffff" aria-label="Putih"></button>
+                  <button data-c="#ffd23f" style="--c:#ffd23f" aria-label="Kuning"></button>
+                  <button data-c="#c8f53c" style="--c:#c8f53c" aria-label="Hijau stabilo"></button>
+                  <button data-c="#ff9fd0" style="--c:#ff9fd0" aria-label="Pink"></button>
+                  <button data-c="#ff5b3a" style="--c:#ff5b3a" aria-label="Oranye"></button>
+                  <button data-c="#3346ff" style="--c:#3346ff" aria-label="Biru"></button>
+                  <button data-c="#141210" style="--c:#141210" aria-label="Hitam"></button>
+                </div>
+              </div>
+              <label class="field">
+                <span class="lbl">Ukuran <output id="tsize-out">64</output></span>
+                <input id="tsize" type="range" min="28" max="120" step="2" value="64" />
+              </label>
+            </div>
+
+            <div class="paper panel" data-panel="motion" hidden>
+              <div class="field">
+                <span class="lbl">Kehalusan (fps)</span>
+                <div class="seg" data-key="fps">
+                  <button data-v="8">8</button><button data-v="10">10</button><button data-v="12" aria-pressed="true">12</button><button data-v="15">15</button>
+                </div>
+              </div>
+              <label class="switch-row">
+                <span>Jadikan stiker diam<small>ambil 1 frame di titik mulai</small></span>
+                <input type="checkbox" id="as-static" class="switch" />
+              </label>
+              <p class="hint">batas wa: animasi ≤ 500 KB & ≤ 10 detik. fps tinggi = lebih halus tapi kualitas gambar turun.</p>
+            </div>
+
+            <div class="print">
+              <button id="make" class="print-btn">Cetak stiker</button>
+              <div id="progress" class="progress" hidden>
+                <div class="fill"><i></i></div>
+                <div class="progress-row">
+                  <span id="progress-label">…</span>
+                  <b id="progress-pct">0%</b>
+                  <button id="cancel" class="link">batal</button>
+                </div>
+              </div>
+            </div>
+
+            <div id="result" class="result" hidden>
+              <div class="result-stage" id="result-stage">
+                <img id="result-img" class="diecut" alt="Hasil stiker" />
+                <div id="result-badge" class="stamp"></div>
+              </div>
+              <p id="result-meta" class="meta"></p>
+              <p id="result-note" class="note" hidden></p>
+              <div class="actions">
+                <button id="share" class="btn lime wide">Kirim ke WhatsApp</button>
+                <button id="download" class="btn">Unduh .webp</button>
+                <button id="save" class="btn">+ Album</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <details class="memo">
+          <summary>Gimana cara masukin ke WhatsApp?</summary>
+          <ol>
+            <li><b>Android</b> — tekan <i>Kirim ke WhatsApp</i>, pilih chat (chat ke diri sendiri juga bisa). Tap stikernya → <i>Tambah ke Favorit</i>.</li>
+            <li><b>WA Web / Desktop</b> — unduh .webp, seret ke jendela chat. Terkirim sebagai stiker.</li>
+            <li><b>iPhone</b> — unduh, lalu kirim lewat WA Web; atau buka file &amp; tekan bagikan.</li>
+            <li><b>Satu pack</b> — di <i>Album</i> pilih 3–30 stiker → <i>Export .wastickers</i>, buka pakai app importer pack stiker.</li>
+          </ol>
+          <p class="hint">stiker diam ≤ 100 KB · animasi ≤ 500 KB & ≤ 10 detik — ukurannya diatur otomatis.</p>
+        </details>
+      </section>
+
+      <!-- ================= ALBUM ================= -->
+      <section id="view-collection" hidden>
+        <div class="album-head">
+          <h1 class="hero sm">Album</h1>
+          <div class="album-tools">
+            <span id="sel-info" class="mono">tap buat milih</span>
+            <button id="sel-all" class="chip">pilih semua</button>
+          </div>
+        </div>
+        <div class="album-page">
+          <div id="grid" class="album"></div>
+          <div id="empty" class="empty" hidden>
+            <svg viewBox="0 0 120 100" width="120" aria-hidden="true"><path d="M20 20h60l20 20v44H20z" fill="none" stroke="currentColor" stroke-width="4" stroke-dasharray="8 7" stroke-linejoin="round"/><path d="M80 20v20h20" fill="none" stroke="currentColor" stroke-width="4" stroke-linejoin="round"/><circle cx="46" cy="52" r="4" fill="currentColor"/><circle cx="66" cy="52" r="4" fill="currentColor"/><path d="M46 70q10-8 20 0" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"/></svg>
+            <p>Album masih kosong melompong.</p>
+            <button class="chip hot" data-goto="make">Bikin satu →</button>
+          </div>
+        </div>
+
+        <div class="selbar" id="selbar">
+          <button id="share-sel" class="btn" disabled>Kirim</button>
+          <button id="export-zip" class="btn" disabled>.zip</button>
+          <button id="del" class="btn danger" disabled>Hapus</button>
+        </div>
+
+        <div class="paper pack">
+          <h2>Jadikan satu pack</h2>
+          <div class="two">
+            <label class="field"><span class="lbl">Nama pack</span><input id="pack-name" value="Stiker Saya" /></label>
+            <label class="field"><span class="lbl">Pembuat</span><input id="pack-author" value="Saya" /></label>
+          </div>
+          <button id="export-pack" class="btn lime wide" disabled>Export .wastickers</button>
+          <p class="hint">whatsapp butuh 3–30 stiker per pack.</p>
+        </div>
+      </section>
+    </main>
+
+    <div id="toast" class="toast" role="status" hidden></div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
