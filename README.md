@@ -1,44 +1,35 @@
 # Stiker WA Maker (PWA)
 
-Bikin stiker WhatsApp dari **foto, video, GIF**, atau langsung dari **link TikTok / Instagram Reels / X**.
+Bikin stiker WhatsApp **diam atau gerak (seperti GIF)** dari **foto, video, dan GIF**. Video TikTok / Reels / X juga bisa: simpan videonya ke galeri dulu, lalu pilih di app.
 
-- Semua proses gambar/video jalan **di browser** (tidak di-upload ke server).
+- Semua proses jalan **di browser**, tidak ada yang di-upload ke server. Cukup hosting statis (Vercel).
 - Output: WebP 512×512 sesuai aturan WhatsApp — diam ≤ 100 KB, animasi ≤ 500 KB & ≤ 10 detik. Kualitas/FPS diatur otomatis supaya muat.
-- Editor: crop/zoom/geser, latar transparan/putih/hitam, sudut bulat/lingkaran, teks ala meme, potong video (mulai, durasi, FPS).
-- Koleksi tersimpan di perangkat (IndexedDB), bisa export `.wastickers` (3–30 stiker) atau `.zip`.
-- PWA: bisa di-install, jalan offline (kecuali fitur link), dan muncul di **share sheet Android** — share video/link dari TikTok langsung ke app ini.
-
-Server kecil (Express + yt-dlp) hanya dipakai untuk mengunduh video dari link, karena browser tidak bisa mengambilnya langsung (CORS).
+- Editor: crop/zoom/geser, latar transparan/putih/hitam, sudut bulat/lingkaran, outline putih ala die-cut, teks (Meme / Gendut / Ketik, gaya garis atau label), filmstrip trimmer untuk pilih durasi video, FPS 8–15.
+- Album tersimpan di perangkat (IndexedDB), bisa export `.wastickers` (3–30 stiker) atau `.zip`.
+- PWA: bisa di-install, jalan offline, dan muncul di **share sheet Android** — share foto/video dari galeri langsung ke app ini.
 
 ## Menjalankan
 
-Butuh Node 20+, dan untuk fitur link: `yt-dlp` (`pip install -U yt-dlp`) + `ffmpeg` (opsional, untuk konversi video HEVC).
+Butuh Node 20+.
 
 ```bash
 npm install
-npm run dev        # Vite (5173) + API (8787)
+npm run dev        # http://localhost:5173
+npm run build      # hasil di dist/
+npm run preview    # coba hasil build di http://localhost:8787
 ```
 
-Produksi:
+> PWA (install, share target, service worker) butuh **HTTPS** kalau dibuka dari HP — pakai URL Vercel atau domain sendiri.
+
+## Deploy ke Vercel
+
+Konfigurasi ada di `vercel.json` (Vite, output `dist`, header untuk service worker).
 
 ```bash
-npm run build
-npm start          # http://localhost:8787 — serve PWA + API
+vercel --prod
 ```
 
-Atau Docker: `docker build -t stiker-wa . && docker run -p 8787:8787 stiker-wa`
-
-> PWA (install, share target, service worker) butuh **HTTPS** kalau dibuka dari HP. Deploy ke VPS/Railway/Render/Fly, atau untuk coba cepat pakai tunnel seperti `cloudflared tunnel --url http://localhost:8787`.
-
-### Env server
-
-| Variabel | Default | Keterangan |
-|---|---|---|
-| `PORT` | 8787 | |
-| `YTDLP_BIN` | auto | path yt-dlp (fallback `python -m yt_dlp`) |
-| `YTDLP_COOKIES` | – | file cookies.txt (Netscape) — membantu Instagram yang sering minta login |
-| `MAX_DOWNLOAD_MB` | 80 | |
-| `MAX_CONCURRENT` | 3 | download paralel maksimum |
+Atau import repo ini di vercel.com — tiap push ke `main` otomatis deploy. Domain sendiri: Project → Settings → Domains → tambah domain, lalu ikuti instruksi DNS (CNAME / A record) yang ditampilkan.
 
 ## Cara masuk ke WhatsApp
 
@@ -48,21 +39,16 @@ Atau Docker: `docker build -t stiker-wa . && docker run -p 8787:8787 stiker-wa`
 
 Website tidak bisa langsung menambah pack ke WhatsApp (itu hanya bisa lewat app native), jadi alurnya lewat kirim ke chat / favorit.
 
-## Catatan
-
-- TikTok & X umumnya lancar. Instagram sering memblokir tanpa login → isi `YTDLP_COOKIES`. Sebagian post TikTok dibatasi per wilayah.
-- Update yt-dlp secara berkala (`pip install -U yt-dlp`) karena platform sering berubah.
-- Hormati hak cipta konten yang kamu jadikan stiker.
+Hormati hak cipta konten yang kamu jadikan stiker.
 
 ## Struktur
 
 ```
 src/main.ts            UI & alur aplikasi
-src/lib/render.ts      gambar frame 512×512 (crop, zoom, teks, sudut)
+src/lib/render.ts      gambar frame 512×512 (crop, zoom, teks, sudut, outline)
 src/lib/sources.ts     loader foto / video / GIF (ImageDecoder)
 src/lib/encode.ts      encoder WebP + pengatur ukuran otomatis (native / wasm untuk Safari)
 src/lib/webp-anim.ts   muxer animated WebP (VP8X/ANIM/ANMF)
 src/lib/zip.ts         penulis ZIP (untuk .wastickers)
 src/sw.ts              service worker (offline + share target)
-server/index.mjs       API /api/fetch (yt-dlp) + serve dist
 ```

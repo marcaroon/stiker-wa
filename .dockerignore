@@ -1,7 +1,0 @@
-node_modules
-dist
-.claude
-*.log
-cookies.txt
-.env
-.env.*

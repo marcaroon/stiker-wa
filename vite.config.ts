@@ -2,9 +2,6 @@ import { defineConfig } from 'vite';
 import { VitePWA } from 'vite-plugin-pwa';
 
 export default defineConfig({
-  server: {
-    proxy: { '/api': 'http://localhost:8787' },
-  },
   optimizeDeps: { exclude: ['@jsquash/webp'] },
   plugins: [
     VitePWA({
@@ -20,7 +17,7 @@ export default defineConfig({
       manifest: {
         name: 'Stiker WA Maker',
         short_name: 'Stiker WA',
-        description: 'Bikin stiker WhatsApp dari foto, video, atau link TikTok / Reels / X.',
+        description: 'Bikin stiker WhatsApp diam & gerak dari foto, video, dan GIF.',
         lang: 'id',
         start_url: '/',
         scope: '/',

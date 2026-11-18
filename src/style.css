@@ -232,6 +232,15 @@ textarea::placeholder, input::placeholder { color: var(--ink-soft); opacity: .8;
 .plat[data-p="tt"] { background: #141210; color: #fff; border: 2px solid var(--ink); text-shadow: -2px -1px 0 #25f4ee, 2px 1px 0 #fe2c55; }
 .plat[data-p="ig"] { background: linear-gradient(45deg, #ffd23f, #ff5b3a 45%, #c13ad6); color: #fff; border: 2px solid var(--ink); }
 .plat[data-p="x"] { background: var(--ink); color: var(--paper); border: 2px solid var(--ink); font-size: 22px; }
+.tip { gap: 12px; padding: 10px 12px; transform: rotate(-.6deg); }
+.tip p { margin: 0; font: 600 13.5px/1.45 var(--mono); }
+.tip b { font: 800 16px/1.2 var(--display); font-stretch: 85%; display: block; }
+.tip .how { color: var(--ink-soft); }
+.plats { flex: none; display: flex; }
+.plats .plat { width: 34px; height: 34px; font-size: 13px; border-radius: 9px; margin-left: -8px; box-shadow: 2px 2px 0 var(--ink); }
+.plats .plat:first-child { margin-left: 0; rotate: -8deg; }
+.plats .plat:nth-child(2) { rotate: 4deg; }
+.plats .plat:last-child { rotate: -3deg; font-size: 17px; }
 .icon-btn { flex: none; width: 44px; height: 44px; display: grid; place-items: center; border: 2px solid var(--ink); border-radius: 11px; background: var(--paper); }
 .icon-btn:active { transform: scale(.92); }
 .go {

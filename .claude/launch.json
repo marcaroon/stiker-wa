@@ -1,6 +1,28 @@
 {
   "version": "0.0.1",
   "configurations": [
-    { "name": "stiker-wa", "runtimeExecutable": "node", "runtimeArgs": ["server/index.mjs"], "port": 8787 }
+    {
+      "name": "stiker-wa",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": [
+        "vite",
+        "--port",
+        "8787",
+        "--strictPort"
+      ],
+      "port": 8787
+    },
+    {
+      "name": "stiker-wa-build",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": [
+        "vite",
+        "preview",
+        "--port",
+        "8788",
+        "--strictPort"
+      ],
+      "port": 8788
+    }
   ]
 }

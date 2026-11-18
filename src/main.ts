@@ -154,11 +154,7 @@ document.addEventListener('paste', (e) => {
   if ((e.target as HTMLElement).closest('input, textarea')) return;
   const f = e.clipboardData?.files?.[0];
   if (f) return openMedia(f, 'clipboard');
-  const url = extractUrl(e.clipboardData?.getData('text') ?? '');
-  if (url) {
-    setLink(url);
-    fetchLink(url);
-  }
+  if (extractUrl(e.clipboardData?.getData('text') ?? '')) linkHint();
 });
 
 $('reset-src').addEventListener('click', () => {
@@ -171,78 +167,12 @@ $('reset-src').addEventListener('click', () => {
 });
 
 /* ------------------------------ links ------------------------------ */
+// No server: links can't be downloaded here, so nudge people to save the video first.
 function extractUrl(text: string) {
   return text.match(/https?:\/\/[^\s"'<>]+/i)?.[0] ?? '';
 }
-function platformOf(url: string) {
-  if (/tiktok\.com/i.test(url)) return 'tt';
-  if (/instagram\.com/i.test(url)) return 'ig';
-  if (/(^|\/\/|\.)(x|twitter|fxtwitter|vxtwitter|fixupx)\.com/i.test(url)) return 'x';
-  return '';
-}
-const PLAT_LABEL: Record<string, string> = { tt: 'TT', ig: 'IG', x: '𝕏', '': '?' };
-const linkInput = $<HTMLInputElement>('link');
-function updatePlat() {
-  const p = platformOf(linkInput.value);
-  const el = $('plat');
-  if (el.dataset.p === p) return;
-  el.dataset.p = p;
-  el.textContent = PLAT_LABEL[p];
-  restartAnim(el, 'flip');
-}
-function setLink(url: string) {
-  linkInput.value = url;
-  updatePlat();
-}
-linkInput.addEventListener('input', updatePlat);
-
-$('paste').addEventListener('click', async () => {
-  try {
-    const url = extractUrl(await navigator.clipboard.readText());
-    if (!url) return toast('clipboard-nya nggak ada link');
-    setLink(url);
-    fetchLink(url);
-  } catch {
-    toast('izin clipboard ditolak — tempel manual aja');
-  }
-});
-
-$('link-form').addEventListener('submit', (e) => {
-  e.preventDefault();
-  const url = extractUrl(linkInput.value.trim());
-  if (!url) return setLinkStatus('link-nya nggak valid', true);
-  fetchLink(url);
-});
-
-let fetching = false;
-async function fetchLink(url: string) {
-  if (fetching) return;
-  fetching = true;
-  const btn = $<HTMLButtonElement>('fetch-btn');
-  btn.disabled = true;
-  setLinkStatus('');
-  $('link-loading').hidden = false;
-  try {
-    const res = await fetch('/api/fetch', {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ url }),
-    });
-    if (!res.ok) {
-      const j = await res.json().catch(() => ({}));
-      throw new Error(j.error || `Gagal mengunduh (HTTP ${res.status})`);
-    }
-    const blob = await res.blob();
-    const host = new URL(url).hostname.replace(/^(www|vm|vt|m)\./, '');
-    await openMedia(new File([blob], 'video.mp4', { type: blob.type || 'video/mp4' }), host);
-  } catch (e) {
-    const msg = (e as Error).message;
-    setLinkStatus(msg === 'Failed to fetch' ? 'server nggak bisa dihubungi. cek koneksi.' : msg, true);
-  } finally {
-    fetching = false;
-    btn.disabled = false;
-    $('link-loading').hidden = true;
-  }
+function linkHint() {
+  toast('link belum bisa langsung — simpan videonya ke galeri dulu, lalu pilih file');
 }
 
 /* ----------------------------- controls ----------------------------- */
@@ -785,8 +715,7 @@ async function handleIncomingShare() {
     const url = extractUrl([params.get('url'), params.get('text'), params.get('title')].join(' '));
     if (url) {
       history.replaceState(null, '', '/');
-      setLink(url);
-      fetchLink(url);
+      linkHint();
     }
     return;
   }
@@ -803,10 +732,8 @@ async function handleIncomingShare() {
       return openMedia(new File([blob], meta.fileName || 'shared', { type: blob.type || meta.fileType }), 'dibagikan');
     }
     const url = extractUrl([meta.url, meta.text, meta.title].filter(Boolean).join(' '));
-    if (url) {
-      setLink(url);
-      fetchLink(url);
-    } else toast('nggak ada link/media yang bisa dipakai');
+    if (url) linkHint();
+    else toast('nggak ada media yang bisa dipakai');
   } catch (e) {
     console.error(e);
   }

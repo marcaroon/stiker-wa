@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>Stiker WA Maker</title>
-    <meta name="description" content="Bikin stiker WhatsApp dari foto, video, atau link TikTok / Reels / X." />
+    <meta name="description" content="Bikin stiker WhatsApp — diam atau gerak — dari foto, video, dan GIF. Semua diproses di HP kamu." />
     <meta name="theme-color" content="#16140f" media="(prefers-color-scheme: dark)" />
     <meta name="theme-color" content="#f2ede3" media="(prefers-color-scheme: light)" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
@@ -45,16 +45,9 @@
             <span class="hint">atau seret ke sini · ctrl+v juga bisa</span>
           </label>
 
-          <form id="link-form" class="tape">
-            <span id="plat" class="plat" data-p="">?</span>
-            <input id="link" type="url" inputmode="url" placeholder="link tiktok / reels / x" autocomplete="off" spellcheck="false" />
-            <button type="button" id="paste" class="icon-btn" title="Tempel dari clipboard" aria-label="Tempel dari clipboard">
-              <svg viewBox="0 0 24 24" width="20" height="20"><path d="M9 4h6v3H9zM7 5H5v16h14V5h-2" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/></svg>
-            </button>
-            <button type="submit" id="fetch-btn" class="go">Ambil<span aria-hidden="true">→</span></button>
-          </form>
-          <div id="link-loading" class="marquee" hidden aria-live="polite">
-            <div><span>Lagi ngambil video ✺ sabar ya ✺ lagi ngambil video ✺ sabar ya ✺&nbsp;</span><span aria-hidden="true">Lagi ngambil video ✺ sabar ya ✺ lagi ngambil video ✺ sabar ya ✺&nbsp;</span></div>
+          <div class="tape tip">
+            <span class="plats" aria-hidden="true"><span class="plat" data-p="tt">TT</span><span class="plat" data-p="ig">IG</span><span class="plat" data-p="x">𝕏</span></span>
+            <p><b>Dari TikTok / Reels / X?</b> Simpan videonya ke galeri dulu <span class="how">(Bagikan → Simpan video)</span>, lalu pilih di atas.</p>
           </div>
           <p id="link-status" class="status" hidden></p>
         </div>
